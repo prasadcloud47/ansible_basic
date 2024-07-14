@@ -1,0 +1,22 @@
+---
+- name: Apache server installed
+  hosts: all
+  become: true
+  tasks:
+  - name: latest Apache version installed
+    apt:
+      name: apache2
+      state: latest
+       
+        # UFW Configuration
+  - name: UFW - Allow HTTP on port 80
+    ufw:
+        rule: allow
+        port: 80
+        proto: tcp
+        
+        
+  - name: Reload Apache
+    service:
+        name: apache2
+        state: reloaded

@@ -1,0 +1,34 @@
+- hosts: all
+#  remote_user: nahmed
+  become: true
+  vars:
+    project_root: /var/www/html
+  tasks:  
+  - name: Install Apache Webserver
+    yum: pkg=httpd state=latest
+  - name: Place the index file at project root
+    copy: src=index.html dest={{ project_root }}/index.html owner=apache group=apache mode=0644
+  - name: Enable Apache on system reboot
+    service: name=httpd enabled=yes
+    
+  - name: FirewallD rules
+    firewalld:
+        permanent: yes
+        immediate: yes
+        service: "{{ item }}"
+        state: enabled
+    with_items:
+       - http
+       - https
+    
+    
+    notify: 
+     - reload firewalld
+     - restart apache
+    
+  handlers:
+  - name: reload firewalld
+    service: name=firewalld state=reloaded
+
+  - name: restart apache
+    service: name=httpd state=restarted

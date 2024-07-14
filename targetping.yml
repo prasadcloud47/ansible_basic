@@ -1,0 +1,8 @@
+- name: Test reachability to gw
+  hosts: all
+  vars:
+#    ansible_network_os: cisco.ios.ios
+  tasks:
+    - ansible.netcommon.net_ping:
+         source: 192.168.1.200
+         dest: 192.168.1.1

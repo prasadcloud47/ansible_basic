@@ -1,0 +1,1 @@
+ansible -m ping all -i inventory.yml && ansible-playbook rat.yml -i inventory.yml --limit webs

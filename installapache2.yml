@@ -1,0 +1,54 @@
+---
+- name: Apache server installed
+  hosts: web1
+  become: true
+  vars:
+#    http_port: 80
+
+  vars_files:
+    - vars/webports.yml
+
+  tasks:
+  - name: latest Apache version installed
+    apt:
+      name: apache2
+      state: latest
+       
+        # UFW Configuration
+  - name: UFW - apply rules
+    ufw:
+        rule: '{{ item.rule }}'
+        port: '{{ item.port }}'
+        proto: '{{ item.proto }}'
+        
+    with_items:
+        - port: 80
+          proto: tcp    
+          rule: allow
+        
+        - port: 8080
+          proto: tcp    
+          rule: allow
+        
+        - port: 443
+          proto: tcp    
+          rule: allow
+
+        - port: 161
+          proto: udp    
+          rule: allow
+          
+        - port: 162
+          proto: udp    
+          rule: allow
+
+
+  - name: Reload UFW
+    service:
+        name: ufw
+        state: reloaded
+        
+  - name: Reload Apache
+    service:
+        name: apache2
+        state: reloaded

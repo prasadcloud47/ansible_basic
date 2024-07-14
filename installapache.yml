@@ -1,0 +1,58 @@
+---
+- name: Apache server installed
+  hosts: all
+  become: true
+  vars:
+#    http_port: 80
+
+  vars_files:
+    - vars/webports.yml
+
+  tasks:
+  - name: latest Apache version installed
+    apt:
+      name: apache2
+      state: latest
+       
+        # UFW Configuration
+  - name: UFW - Allow HTTP on port 80
+    ufw:
+        rule: allow
+        port: "'{{ http_port1 }}'"
+        proto: tcp
+        
+  - name: UFW - Allow HTTP on port 8080
+    ufw:
+        rule: allow
+        port: "'{{ http_port2 }}'"
+        proto: tcp
+
+
+  - name: UFW - Allow HTTPS on port 443
+    ufw:
+        rule: allow
+        port: "'{{ https_port }}'"
+        proto: tcp
+
+  - name: UFW - Allow SNMP on port 161
+    ufw:
+        rule: allow
+        port: "'{{ snmp_port1 }}'"
+        proto: udp
+
+  - name: UFW - Allow SNMP on port 162
+    ufw:
+        rule: allow
+        port: "'{{ snmp_port2 }}'"
+        proto: udp
+
+
+  - name: Reload UFW
+    service:
+        name: ufw
+        state: reloaded
+        
+  - name: Reload Apache
+    service:
+        name: apache2
+        state: reloaded

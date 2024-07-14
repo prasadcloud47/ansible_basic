@@ -1,0 +1,15 @@
+- name: Create a directory if it does not exist
+  hosts: web1
+  become: true
+  tasks:
+   - name: create folder prasad
+     ansible.builtin.file:
+       path: /home/prasad
+       state: directory
+       mode: '0755'
+       
+   - name: Add a line to a file if the file does not exist, without passing regexp
+     ansible.builtin.lineinfile:
+       path: /home/prasad/ansible.txt
+       line: 192.168.1.99 foo.lab.net foo
+       create: yes
